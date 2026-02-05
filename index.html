@@ -1,546 +1,371 @@
 <!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D - Форма жизни | Студия 3D печати</title>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;800&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-    
-    <style>
-        /* --- ПЕРЕМЕННЫЕ И ОБЩИЕ СТИЛИ --- */
-        :root {
-            --primary: #007AFF;
-            --accent: #00F2FF;
-            --dark: #1A1A1A;
-            --light: #F8FAFC;
-            --white: #FFFFFF;
-            --glass: rgba(255, 255, 255, 0.7);
-            --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
-            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>3D - Форма жизни | Будущее обретает форму</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700;800;900&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#007AFF",
+                        "accent-cyan": "#00F2FF",
+                        "obsidian": "#0B0E14",
+                        "card-bg": "rgba(255, 255, 255, 0.03)",
+                    },
+                    fontFamily: {
+                        "display": ["Exo 2", "sans-serif"],
+                        "sans": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                },
+            },
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+    </script>
+<style type="text/tailwindcss">
+        @layer base {
+            body {
+                font-family: 'Inter', sans-serif;
+                color: #FFFFFF;
+                @apply bg-obsidian;
+            }
+            h1, h2, h3, h4 {
+                font-family: 'Exo 2', sans-serif;
+            }
         }
-
-        html {
-            scroll-behavior: smooth;
+        .hero-gradient-overlay {
+            background: radial-gradient(circle at 70% 50%, rgba(0, 242, 255, 0.05) 0%, rgba(11, 14, 20, 0.85) 60%, rgba(11, 14, 20, 1) 100%);
         }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--light);
-            color: var(--dark);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        h1, h2, h3, .logo {
-            font-family: 'Exo 2', sans-serif;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        ul { list-style: none; }
-        a { text-decoration: none; color: inherit; }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        .btn {
-            padding: 14px 32px;
-            border-radius: 50px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            display: inline-block;
-            border: none;
-            text-align: center;
-        }
-
-        .btn-main {
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            color: white;
-            box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3);
-        }
-
-        .btn-main:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0, 122, 255, 0.4);
-        }
-
-        /* --- НАВИГАЦИЯ --- */
-        header {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            background: var(--glass);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            z-index: 1000;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-            padding: 15px 0;
-        }
-
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 1.4rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 30px;
-        }
-
-        .nav-links a {
-            font-size: 0.9rem;
-            font-weight: 600;
-            position: relative;
-        }
-
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--primary);
-            transition: var(--transition);
-        }
-
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-
-        .burger {
-            display: none;
-            cursor: pointer;
-        }
-
-        /* --- ГЛАВНЫЙ ЭКРАН --- */
-        #hero {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            background: radial-gradient(circle at 90% 10%, rgba(0, 242, 255, 0.1), transparent),
-                        radial-gradient(circle at 10% 90%, rgba(0, 122, 255, 0.1), transparent);
-            padding-top: 80px;
-        }
-
-        .hero-content {
-            max-width: 700px;
-        }
-
-        .hero-content h1 {
-            font-size: clamp(2.5rem, 5vw, 4.5rem);
-            line-height: 1.1;
-            margin-bottom: 25px;
-        }
-
-        .hero-content p {
-            font-size: 1.2rem;
-            color: #555;
-            margin-bottom: 35px;
-        }
-
-        /* --- РАЗДЕЛ "О НАС" --- */
-        section { padding: 100px 0; }
-
-        .section-title {
-            text-align: center;
-            font-size: 2.2rem;
-            margin-bottom: 50px;
-            position: relative;
-        }
-
-        .section-title::before {
-            content: "";
-            width: 60px;
-            height: 4px;
-            background: var(--primary);
-            position: absolute;
-            bottom: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .about-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 60px;
-            align-items: center;
-        }
-
-        .about-image {
-            background: white;
-            padding: 20px;
-            border-radius: 30px;
-            box-shadow: var(--shadow);
-            transform: rotate(-2deg);
-        }
-
-        .about-image img {
-            width: 100%;
-            border-radius: 20px;
-            filter: grayscale(100%);
-            transition: var(--transition);
-        }
-
-        .about-image:hover img {
-            filter: grayscale(0%);
-        }
-
-        /* --- УСЛУГИ --- */
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-        }
-
         .service-card {
-            background: var(--white);
-            padding: 40px;
-            border-radius: 24px;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            text-align: center;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 122, 255, 0.15);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
         .service-card:hover {
-            transform: translateY(-10px);
-            background: linear-gradient(135deg, #ffffff, #f0f7ff);
+            background: rgba(0, 122, 255, 0.08);
+            border-color: rgba(0, 122, 255, 0.4);
+            transform: translateY(-8px);
+            box-shadow: 0 0 30px rgba(0, 122, 255, 0.15);
         }
-
-        .service-icon {
-            font-size: 3rem;
-            margin-bottom: 20px;
-            display: block;
+        .nav-blur {
+            background: rgba(11, 14, 20, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-
-        /* --- НОВОСТИ (ОБНОВЛЕНО) --- */
-        #news { background: #f0f4f8; }
-
-        .news-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 30px;
+        .glass-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
         }
-
-        .news-item {
-            background: var(--white);
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            cursor: pointer;
+        .glass-input:focus {
+            border-color: #007AFF;
+            background: rgba(255, 255, 255, 0.08);
         }
-
-        .news-img-wrapper {
-            height: 220px;
-            width: 100%;
-            overflow: hidden; /* Скрывает выход изображения за границы */
-            position: relative;
+        .glow-accent {
+            box-shadow: 0 0 20px rgba(0, 122, 255, 0.4);
         }
-
-        .news-img-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* Заполняет блок, сохраняя пропорции */
-            transition: transform 0.6s ease;
+        .render-container img {
+            filter: contrast(1.1) brightness(0.9);
+            mask-image: linear-gradient(to right, transparent 0%, black 40%, black 100%);
         }
-
-        /* Эффект увеличения изображения при наведении */
-        .news-item:hover .news-img-wrapper img {
-            transform: scale(1.1);
-        }
-
-        .news-content { padding: 25px; }
-
-        .news-content h3 {
-            font-size: 1.1rem;
-            margin-bottom: 15px;
-            text-transform: none;
-            transition: color 0.3s;
-        }
-
-        .news-item:hover h3 {
-            color: var(--primary);
-        }
-
-        .news-date {
-            font-size: 0.8rem;
-            color: var(--primary);
-            font-weight: 600;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        /* --- КОНТАКТЫ --- */
-        .contact-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 50px;
-            background: var(--white);
-            padding: 40px;
-            border-radius: 30px;
-            box-shadow: var(--shadow);
-        }
-
-        .info-block { margin-bottom: 20px; }
-        .info-block h4 { color: var(--primary); margin-bottom: 5px; }
-
-        form { display: flex; flex-direction: column; gap: 15px; }
-
-        input, textarea {
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 12px;
-            outline: none;
-            font-family: inherit;
-        }
-
-        input:focus { border-color: var(--primary); }
-
-        footer {
-            text-align: center;
-            padding: 40px 0;
-            background: var(--dark);
-            color: var(--white);
-        }
-
-        /* --- МОБИЛЬНАЯ ВЕРСИЯ --- */
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                width: 100%;
-                background: white;
-                flex-direction: column;
-                padding: 20px;
-                text-align: center;
-                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            }
-
-            .nav-links.active { display: flex; }
-
-            .burger { display: block; font-size: 1.5rem; }
-
-            .about-grid, .contact-container {
-                grid-template-columns: 1fr;
-            }
-
-            .hero-content h1 { font-size: 2.5rem; }
+        .dof-blur {
+            backdrop-filter: blur(2px);
+            pointer-events: none;
         }
     </style>
 </head>
-<body>
+<body class="selection:bg-primary selection:text-white overflow-x-hidden">
+<nav class="fixed top-0 left-0 right-0 z-50 px-6 py-8 flex justify-center">
+<div class="w-full max-w-[1200px]">
+<header class="flex items-center justify-between whitespace-nowrap nav-blur rounded-full px-8 py-3">
+<div class="flex items-center gap-3">
+<div class="size-8 text-primary">
+<svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M39.475 21.6262C40.358 21.4363 40.6863 21.5589 40.7581 21.5934C40.7876 21.655 40.8547 21.857 40.8082 22.3336C40.7408 23.0255 40.4502 24.0046 39.8572 25.2301C38.6799 27.6631 36.5085 30.6631 33.5858 33.5858C30.6631 36.5085 27.6632 38.6799 25.2301 39.8572C24.0046 40.4502 23.0255 40.7407 22.3336 40.8082C21.8571 40.8547 21.6551 40.7875 21.5934 40.7581C21.5589 40.6863 21.4363 40.358 21.6262 39.475C21.8562 38.4054 22.4689 36.9657 23.5038 35.2817C24.7575 33.2417 26.5497 30.9744 28.7621 28.762C30.9744 26.5497 33.2417 24.7574 35.2817 23.5037C36.9657 22.4689 38.4054 21.8562 39.475 21.6262ZM4.41189 29.2403L18.7597 43.5881C19.8813 44.7097 21.4027 44.9179 22.7217 44.7893C24.0585 44.659 25.5148 44.1631 26.9723 43.4579C29.9052 42.0387 33.2618 39.5667 36.4142 36.4142C39.5667 33.2618 42.0387 29.9052 43.4579 26.9723C44.1631 25.5148 44.659 24.0585 44.7893 22.7217C44.9179 21.4027 44.7097 19.8813 43.5881 18.7597L29.2403 4.41187C27.8527 3.02428 25.8765 3.02573 24.2861 3.36776C22.6081 3.72863 20.7334 4.58419 18.8396 5.74801C16.4978 7.18716 13.9881 9.18353 11.5858 11.5858C9.18354 13.988 7.18717 16.4978 5.74802 18.8396C4.58421 20.7334 3.72865 22.6081 3.36778 24.2861C3.02574 25.8765 3.02429 27.8527 4.41189 29.2403Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<span class="text-white text-xl font-black tracking-tight font-display uppercase">3D - ФОРМА ЖИЗНИ</span>
+</div>
+<div class="hidden md:flex items-center gap-10">
+<a class="text-slate-400 hover:text-white text-sm font-semibold transition-colors" href="#">Главная</a>
+<a class="text-slate-400 hover:text-white text-sm font-semibold transition-colors" href="#about">О компании</a>
+<a class="text-slate-400 hover:text-white text-sm font-semibold transition-colors" href="#services">Услуги</a>
+<a class="text-slate-400 hover:text-white text-sm font-semibold transition-colors" href="#news">Блог</a>
+<a class="text-slate-400 hover:text-white text-sm font-semibold transition-colors" href="#contact">Контакты</a>
+</div>
+<button class="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg shadow-primary/20 transition-all transform hover:scale-105 active:scale-95">
+                Заказать 3D
+            </button>
+</header>
+</div>
+</nav>
+<main>
+<section class="relative min-h-screen flex items-center justify-center pt-20 px-6 overflow-hidden">
+<div class="absolute inset-0 z-0 render-container">
+<img alt="High-Res 3D Geometric Object with Internal Light" class="w-full h-full object-cover object-right" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBl63IGn18NFQbF8KSLYqEL7j-jJZWEj4uYvR6cY3Mq6uYlKgC1I8qI2x7zYWLoK1spg1DzXZw1gWE2GgdC7-Mv5g1lMnm--RvtoMJbu8jOctCTc3mSOOlnF1fkTjp7FohNdoB3X2PI2Hmp1WQ5rX86IhIR2tbSquKtgzv8Hq0vDRBkeeV1mU7karXEeIWebN94ENjoai7eKVZGYrm0qlSPawoz9SptPA0DjiRKKUGFyA_lckGhTNb1Cg23Tz7G35uzvgvMer-2Qg"/>
+</div>
+<div class="absolute inset-0 hero-gradient-overlay z-[1]"></div>
+<div class="absolute inset-0 dof-blur z-[2]"></div>
+<div class="relative w-full max-w-[1200px] z-10">
+<div class="max-w-3xl flex flex-col gap-8">
+<div class="flex flex-col gap-4">
+<div class="flex items-center gap-2 mb-2">
+<span class="inline-block w-2 h-2 rounded-full bg-accent-cyan animate-pulse shadow-[0_0_8px_#00F2FF]"></span>
+<span class="text-accent-cyan font-bold tracking-[0.3em] text-sm uppercase">Аддитивное производство нового поколения</span>
+</div>
+<h1 class="text-white text-6xl md:text-8xl font-black leading-[0.9] tracking-tighter uppercase">
+                    БУДУЩЕЕ <br/> <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent-cyan">ОБРЕТАЕТ</span> <br/> ФОРМУ
+                </h1>
+<p class="text-slate-300 text-lg md:text-2xl font-normal max-w-xl leading-relaxed mt-6">
+                    Передовые технологии 3D-печати и моделирования для ваших идей. Чистые и профессиональные решения для визионеров.
+                </p>
+</div>
+<div class="flex flex-wrap gap-5 mt-4">
+<button class="bg-primary text-white px-12 py-5 rounded-full font-bold text-lg glow-accent hover:bg-primary/90 transition-all transform hover:-translate-y-1">
+                    Создать модель
+                </button>
+<button class="bg-white/10 backdrop-blur-md border border-white/20 text-white px-12 py-5 rounded-full font-bold text-lg hover:bg-white/20 transition-all">
+                    Наш процесс
+                </button>
+</div>
+</div>
+</div>
+<div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-50 z-10">
+<span class="text-xs uppercase tracking-widest font-bold">Листать вниз</span>
+<span class="material-symbols-outlined animate-bounce">keyboard_arrow_down</span>
+</div>
+</section>
+<section class="py-32 px-6 bg-obsidian" id="services">
+<div class="w-full max-w-[1200px] mx-auto">
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-8">
+<div class="max-w-2xl">
+<span class="text-primary font-bold tracking-widest text-xs uppercase mb-3 block">Наши компетенции</span>
+<h2 class="text-white text-4xl md:text-5xl font-extrabold tracking-tight mb-4 uppercase">Наши услуги</h2>
+<p class="text-slate-400 text-lg">Мы сокращаем путь от цифрового дизайна до физической реальности с помощью передовых материалов и высокоточного сканирования.</p>
+</div>
+<a class="text-primary font-bold flex items-center gap-2 hover:gap-4 transition-all group text-lg" href="#">
+                Все услуги <span class="material-symbols-outlined">arrow_forward</span>
+</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<div class="service-card p-10 rounded-2xl flex flex-col gap-8 group">
+<div class="w-14 h-14 flex items-center justify-center rounded-xl bg-primary/20 text-primary group-hover:bg-primary group-hover:text-white transition-all shadow-[0_0_15px_rgba(0,122,255,0.2)]">
+<span class="material-symbols-outlined text-3xl">token</span>
+</div>
+<div>
+<h3 class="text-white text-xl font-bold mb-3">Проектирование</h3>
+<p class="text-slate-400 text-sm leading-relaxed">Быстрое итеративное проектирование для разработки промышленного оборудования и прототипов.</p>
+</div>
+</div>
+<div class="service-card p-10 rounded-2xl flex flex-col gap-8 group">
+<div class="w-14 h-14 flex items-center justify-center rounded-xl bg-primary/20 text-primary group-hover:bg-primary group-hover:text-white transition-all shadow-[0_0_15px_rgba(0,122,255,0.2)]">
+<span class="material-symbols-outlined text-3xl">biotech</span>
+</div>
+<div>
+<h3 class="text-white text-xl font-bold mb-3">3D Сканирование</h3>
+<p class="text-slate-400 text-sm leading-relaxed">Высокоточное сканирование органических форм с точностью до микрона для медицины и дизайна.</p>
+</div>
+</div>
+<div class="service-card p-10 rounded-2xl flex flex-col gap-8 group">
+<div class="w-14 h-14 flex items-center justify-center rounded-xl bg-primary/20 text-primary group-hover:bg-primary group-hover:text-white transition-all shadow-[0_0_15px_rgba(0,122,255,0.2)]">
+<span class="material-symbols-outlined text-3xl">precision_manufacturing</span>
+</div>
+<div>
+<h3 class="text-white text-xl font-bold mb-3">FDM Печать</h3>
+<p class="text-slate-400 text-sm leading-relaxed">Послойная печать крупногабаритных деталей промышленного назначения и оснастки.</p>
+</div>
+</div>
+<div class="service-card p-10 rounded-2xl flex flex-col gap-8 group">
+<div class="w-14 h-14 flex items-center justify-center rounded-xl bg-primary/20 text-primary group-hover:bg-primary group-hover:text-white transition-all shadow-[0_0_15px_rgba(0,122,255,0.2)]">
+<span class="material-symbols-outlined text-3xl">layers</span>
+</div>
+<div>
+<h3 class="text-white text-xl font-bold mb-3">SLA Печать</h3>
+<p class="text-slate-400 text-sm leading-relaxed">Высокоточная фотополимерная печать для создания моделей с идеальной поверхностью.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="py-32 px-6 bg-[#0E1218]" id="about">
+<div class="w-full max-w-[1200px] mx-auto">
+<div class="flex flex-col lg:flex-row gap-20 items-center">
+<div class="lg:w-1/2 order-2 lg:order-1 relative">
+<div class="absolute -inset-4 bg-primary/10 blur-3xl rounded-full"></div>
+<div class="relative rounded-2xl overflow-hidden shadow-2xl border border-white/10">
+<img alt="Современная лаборатория 3D-печати" class="w-full h-[600px] object-cover hover:scale-105 transition-transform duration-1000" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8pYNIrJQAMuOGu6_zhP0ibuEO6EwjXpS3iRmPTRZiuMSaVvFjOhUC10ba9K596IPJZWNMY86Q3oQrHZTXQTnC_fOd3mFpZ-zhfMwD-5Ec3SXx78nJs1NX2VbMLFcXeqpeKBMZPZbqEeGL_gzPVeLJkCmJOi7qBRzlWgi0SLhJ2a_mKV8arLHhRq0spX8C5XeINOWS9dXmHAT-_6admakaMn3Xe7_a9NKsteOEyikvlJ5xjJ6Ab80mNsRNTD55ppGEJse8ilaaWg"/>
+<div class="absolute inset-0 bg-gradient-to-t from-obsidian/80 to-transparent"></div>
+<div class="absolute bottom-10 left-10">
+<p class="text-accent-cyan font-black text-6xl mb-1">12+</p>
+<p class="text-white/80 text-sm uppercase tracking-[0.2em] font-bold">Мировых патентов</p>
+</div>
+</div>
+</div>
+<div class="lg:w-1/2 order-1 lg:order-2">
+<span class="text-primary font-bold tracking-widest text-xs uppercase mb-4 block">О лаборатории</span>
+<h2 class="text-white text-5xl md:text-6xl font-black mb-10 leading-tight tracking-tighter uppercase">
+                    НАША ИСТОРИЯ
+                </h2>
+<div class="space-y-8 text-slate-400 text-lg leading-relaxed">
+<p>
+                        Наша миссия сосредоточена на пересечении высоких технологий и органической геометрии. Мы раздвигаем границы возможного в аддитивном производстве, объединяя генеративный дизайн с передовой наукой о материалах.
+                    </p>
+<p>
+                        Основанная в 2021 году, студия «Форма Жизни» стала ведущим центром для творцов, которым не нужен компромисс между эстетикой и конструктивной целостностью.
+                    </p>
+<div class="pt-8 border-t border-white/10 flex flex-col gap-5">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary">verified</span>
+<span class="text-white font-semibold">Геометрическая точность 99.9%</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary">verified</span>
+<span class="text-white font-semibold">Собственные композитные материалы</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary">verified</span>
+<span class="text-white font-semibold">Полная защита ваших CAD-файлов</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="py-32 px-6 bg-obsidian" id="news">
+<div class="w-full max-w-[1200px] mx-auto">
+<div class="text-center mb-20">
+<span class="text-primary font-bold tracking-widest text-xs uppercase mb-3 block">Инсайты индустрии</span>
+<h2 class="text-white text-4xl md:text-5xl font-extrabold mb-4 uppercase">Новости технологий</h2>
+<p class="text-slate-400 max-w-xl mx-auto">Последние обновления из лаборатории и новые знаковые коллаборации в мире 3D-печати.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+<div class="group cursor-pointer bg-white/5 p-5 rounded-3xl border border-white/5 hover:border-primary/30 transition-all">
+<div class="relative overflow-hidden rounded-2xl mb-6">
+<img class="w-full aspect-[4/5] object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCdbpXPUbM39XbiKEKrDyHz-Bjp7lDpIEsGNwLcaBkYlMb4HomioESVG7n8MS2tjgIHSenDJVNxhdQvey5sPvuU-VtAsKoLiErCp-txQawuvuhZmFhBsCL-RudbpcG5g4El1BeeD5gMegwA_UGPvARBW0lKdSphGhn4mUkSDB4IiHMGrvCLrnRl7N-TEocpzNfIJeQcBlgAJsj8UkorOtXecaQ4mV2aR6i9zJow_faDtZayLzzPSxQTuq05kvRKGznHZpcB0qpj-Q"/>
+<div class="absolute top-4 right-4">
+<span class="bg-primary text-white text-[10px] px-3 py-1 rounded-full uppercase font-black tracking-widest shadow-lg">Инновации</span>
+</div>
+</div>
+<span class="text-slate-500 text-xs font-bold mb-3 block">12 Октября, 2023</span>
+<h3 class="text-white text-xl font-bold group-hover:text-primary transition-colors leading-tight mb-3">Аэрокосмический проект: Снижение веса конструкций</h3>
+<p class="text-slate-400 text-sm leading-relaxed line-clamp-2">Как мы достигли снижения веса конструкции на 40% для шасси орбитальных спутников.</p>
+</div>
+<div class="group cursor-pointer bg-white/5 p-5 rounded-3xl border border-white/5 hover:border-primary/30 transition-all">
+<div class="relative overflow-hidden rounded-2xl mb-6">
+<img class="w-full aspect-[4/5] object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYmdxxmJiKQbWFxT9EfGiq2EUcQcwixnjA5js41NQFpXNs78V6K_Mb-euAPX10uUUUkKn4NJf1n2qFXs73MXT0eZ_fz38uaO3A1yoxT5Qu7b9RejgKBOd2AN8LPSumSfqap-PkkRj-s9SJMdXBjhkQsD-Unir8EBy9XH64ecsmzVEdmn2IYysZrfXw9eejwA7hwNtQ2cQp8oRtFINa9P4p1Tw_Y-8CBP2YQyuAOEnu8gdvnl1mniDawgNcGu59Y7NBv3vCBXwJ5g"/>
+<div class="absolute top-4 right-4">
+<span class="bg-accent-cyan text-obsidian text-[10px] px-3 py-1 rounded-full uppercase font-black tracking-widest shadow-lg">Лаборатория</span>
+</div>
+</div>
+<span class="text-slate-500 text-xs font-bold mb-3 block">5 Ноября, 2023</span>
+<h3 class="text-white text-xl font-bold group-hover:text-primary transition-colors leading-tight mb-3">DMLS: Будущее прямого лазерного спекания металлов</h3>
+<p class="text-slate-400 text-sm leading-relaxed line-clamp-2">Технология DMLS разрушает барьеры традиционных методов литья металлов.</p>
+</div>
+<div class="group cursor-pointer bg-white/5 p-5 rounded-3xl border border-white/5 hover:border-primary/30 transition-all">
+<div class="relative overflow-hidden rounded-2xl mb-6">
+<img class="w-full aspect-[4/5] object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuACfGJeqPVrNSx76BNMZhQaiTd8Y-d5LwayQ1_S8-CGu4BM0xs1pGTW0mmoxKFA8cKIiG5PXLru-0Dh4Q_eQyrndT34InRZFNcunRF-7I_PDyDu-jFGKIkzWHKD8aBtjuUKuffcBfTQYHUzoopyOgXoisEtwJ26zaULb2VaTtI0FNOwzcsrc5XBT1i6u7BEDT9ckx_K88diAXbi9PW7L-X9MDCsr33WIsJVXVIxmZBi56Q5YtLs_ScbDg5YZRrGk76kVh7qijZEQg"/>
+<div class="absolute top-4 right-4">
+<span class="bg-primary text-white text-[10px] px-3 py-1 rounded-full uppercase font-black tracking-widest shadow-lg">Кейс</span>
+</div>
+</div>
+<span class="text-slate-500 text-xs font-bold mb-3 block">20 Ноября, 2023</span>
+<h3 class="text-white text-xl font-bold group-hover:text-primary transition-colors leading-tight mb-3">Биосинтетические структуры в современной архитектуре</h3>
+<p class="text-slate-400 text-sm leading-relaxed line-clamp-2">Изучение интеграции органических 3D-форм в экологически устойчивые здания.</p>
+</div>
+</div>
+</div>
+</section>
+<section class="py-32 px-6 bg-obsidian" id="contact">
+<div class="w-full max-w-[1200px] mx-auto">
+<div class="bg-white/5 rounded-[2.5rem] overflow-hidden flex flex-col lg:flex-row border border-white/10">
+<div class="lg:w-1/2 p-12 lg:p-20">
+<span class="text-primary font-bold tracking-widest text-xs uppercase mb-4 block">Обсудим проект?</span>
+<h2 class="text-white text-4xl font-black mb-10 uppercase">Связаться с нами</h2>
+<form class="space-y-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="flex flex-col gap-2">
+<label class="text-xs font-bold text-slate-400 uppercase tracking-widest px-1">Ваше имя</label>
+<input class="glass-input rounded-xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-slate-600" placeholder="Имя или Название компании" type="text"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-xs font-bold text-slate-400 uppercase tracking-widest px-1">Email</label>
+<input class="glass-input rounded-xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-slate-600" placeholder="hello@example.com" type="email"/>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-xs font-bold text-slate-400 uppercase tracking-widest px-1">Тип услуги</label>
+<select class="glass-input rounded-xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all appearance-none cursor-pointer">
+<option class="bg-obsidian">Проектирование и прототипы</option>
+<option class="bg-obsidian">Промышленная 3D печать</option>
+<option class="bg-obsidian">3D Сканирование</option>
+<option class="bg-obsidian">Индивидуальное моделирование</option>
+</select>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-xs font-bold text-slate-400 uppercase tracking-widest px-1">Ваш проект...</label>
+<textarea class="glass-input rounded-xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none placeholder:text-slate-600" placeholder="Опишите ваши требования и сроки..." rows="4"></textarea>
+</div>
+<button class="w-full bg-primary hover:bg-primary/90 text-white font-black py-5 rounded-xl transition-all flex items-center justify-center gap-3 shadow-lg glow-accent mt-4" type="submit">
+                        ОТПРАВИТЬ ЗАПРОС <span class="material-symbols-outlined">send</span>
+</button>
+</form>
+</div>
+<div class="lg:w-1/2 relative min-h-[500px]">
+<div class="absolute inset-0">
+<img alt="Карта расположения студии" class="w-full h-full object-cover grayscale brightness-50 contrast-125" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDvuYCYJjnAtIShffeRQH-hxbzTI0PCl_wV4idEG5psA-81bCjNFWiAyb5RAAG61_pYmCERNdJiTuQAx9Ic4NTSjETjayCiUdLekf9zFL23gH6E-Hz1EZ4VgAnKaJA_jqUcMER8y173FZvKAtQumXV856KXWHSMXhAVcHuxUeFuej80uCNgkCuZAanXtO1bbZq9LJcPmxG3vxxB-7ErevcmRpbkAHH09Q01neBvjtwPxAvh7solBX-BgtQ_-77kxZNuabzdkrMTaQ"/>
+</div>
+<div class="relative h-full flex flex-col justify-end p-12 lg:p-20 bg-gradient-to-t from-obsidian via-obsidian/40 to-transparent">
+<div class="space-y-8">
+<div>
+<h3 class="text-white font-black text-2xl mb-2 uppercase tracking-tight">Студия в Москве</h3>
+<p class="text-slate-400 font-medium text-lg leading-relaxed">ул. Ленинская Слобода, 19 <br/> Москва 115280, Россия</p>
+</div>
+<div>
+<h3 class="text-white font-black text-2xl mb-2 uppercase tracking-tight">Связь 24/7</h3>
+<p class="text-primary font-bold text-xl hover:underline cursor-pointer">hello@lifeform.ru</p>
+</div>
+<div class="flex gap-5 pt-4">
+<a class="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-primary hover:border-primary transition-all shadow-lg" href="#">
+<span class="material-symbols-outlined text-xl">language</span>
+</a>
+<a class="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-primary hover:border-primary transition-all shadow-lg" href="#">
+<span class="material-symbols-outlined text-xl">share</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer class="py-16 px-6 border-t border-white/5 bg-obsidian">
+<div class="w-full max-w-[1200px] mx-auto flex flex-col md:flex-row items-center justify-between gap-10">
+<div class="flex items-center gap-3">
+<div class="size-6 text-primary">
+<svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M39.475 21.6262C40.358 21.4363 40.6863 21.5589 40.7581 21.5934C40.7876 21.655 40.8547 21.857 40.8082 22.3336C40.7408 23.0255 40.4502 24.0046 39.8572 25.2301C38.6799 27.6631 36.5085 30.6631 33.5858 33.5858C30.6631 36.5085 27.6632 38.6799 25.2301 39.8572C24.0046 40.4502 23.0255 40.7407 22.3336 40.8082C21.8571 40.8547 21.6551 40.7875 21.5934 40.7581C21.5589 40.6863 21.4363 40.358 21.6262 39.475C21.8562 38.4054 22.4689 36.9657 23.5038 35.2817C24.7575 33.2417 26.5497 30.9744 28.7621 28.762C30.9744 26.5497 33.2417 24.7574 35.2817 23.5037C36.9657 22.4689 38.4054 21.8562 39.475 21.6262ZM4.41189 29.2403L18.7597 43.5881C19.8813 44.7097 21.4027 44.9179 22.7217 44.7893C24.0585 44.659 25.5148 44.1631 26.9723 43.4579C29.9052 42.0387 33.2618 39.5667 36.4142 36.4142C39.5667 33.2618 42.0387 29.9052 43.4579 26.9723C44.1631 25.5148 44.659 24.0585 44.7893 22.7217C44.9179 21.4027 44.7097 19.8813 43.5881 18.7597L29.2403 4.41187C27.8527 3.02428 25.8765 3.02573 24.2861 3.36776C22.6081 3.72863 20.7334 4.58419 18.8396 5.74801C16.4978 7.18716 13.9881 9.18353 11.5858 11.5858C9.18354 13.988 7.18717 16.4978 5.74802 18.8396C4.58421 20.7334 3.72865 22.6081 3.36778 24.2861C3.02574 25.8765 3.02429 27.8527 4.41189 29.2403Z" fill="currentColor"></path>
+</svg>
+</div>
+<span class="text-slate-500 text-sm tracking-[0.2em] font-bold uppercase">© 2024 3D - ФОРМА ЖИЗНИ</span>
+</div>
+<div class="flex flex-wrap justify-center gap-10">
+<a class="text-slate-500 hover:text-white text-xs uppercase tracking-widest font-bold transition-colors" href="#">Конфиденциальность</a>
+<a class="text-slate-400 hover:text-white text-xs uppercase tracking-widest font-bold transition-colors" href="#">Условия использования</a>
+<a class="text-slate-400 hover:text-white text-xs uppercase tracking-widest font-bold transition-colors" href="#">Инструкции</a>
+</div>
+</div>
+</footer>
 
-    <!-- Навигация -->
-    <header>
-        <div class="container nav">
-            <a href="#" class="logo">3D - ФОРМА ЖИЗНИ</a>
-            <div class="burger" id="burger">☰</div>
-            <ul class="nav-links" id="nav-links">
-                <li><a href="#hero">Главная</a></li>
-                <li><a href="#about">О компании</a></li>
-                <li><a href="#services">Услуги</a></li>
-                <li><a href="#news">Блог</a></li>
-                <li><a href="#contact">Контакты</a></li>
-            </ul>
-        </div>
-    </header>
-
-    <!-- Главный экран -->
-    <section id="hero">
-        <div class="container">
-            <div class="hero-content">
-                <h1>Будущее обретает <span style="color:var(--primary)">форму</span></h1>
-                <p>Мы не просто печатаем на 3D-принтерах. Мы вдыхаем жизнь в ваши идеи с помощью передовых аддитивных технологий и высокоточного моделирования.</p>
-                <a href="#contact" class="btn btn-main">Создать модель</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- О компании -->
-    <section id="about">
-        <div class="container">
-            <h2 class="section-title">Наша История</h2>
-            <div class="about-grid">
-                <div class="about-image">
-                    <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="3D Printing Lab">
-                </div>
-                <div class="about-content">
-                    <h3>От кода к материи</h3>
-                    <p>Студия «3D - форма жизни» была основана в 2018 году командой инженеров и дизайнеров, влюбленных в технологии будущего. Мы начинали с одного принтера в гараже, а сегодня — это современный цех аддитивного производства.</p>
-                    <br>
-                    <p>Наша миссия: сделать сложные технологии производства доступными для каждого — от студента-изобретателя до крупного промышленного предприятия.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Услуги -->
-    <section id="services">
-        <div class="container">
-            <h2 class="section-title">Что мы умеем</h2>
-            <div class="services-grid">
-                <div class="service-card">
-                    <span class="service-icon">📐</span>
-                    <h3>Проектирование</h3>
-                    <p>Создание CAD-моделей любой сложности по вашим чертежам или эскизам.</p>
-                </div>
-                <div class="service-card">
-                    <span class="service-icon">📡</span>
-                    <h3>3D Сканирование</h3>
-                    <p>Высокоточная оцифровка физических объектов для реверс-инжиниринга.</p>
-                </div>
-                <div class="service-card">
-                    <span class="service-icon">⚙️</span>
-                    <h3>FDM Печать</h3>
-                    <p>Печать инженерными пластиками прочных функциональных деталей.</p>
-                </div>
-                <div class="service-card">
-                    <span class="service-icon">🧪</span>
-                    <h3>SLA Печать</h3>
-                    <p>Фотополимерная печать с микронной точностью для ювелиров и медиков.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Блог/Новости (С ИЗОБРАЖЕНИЯМИ) -->
-    <section id="news">
-        <div class="container">
-            <h2 class="section-title">Новости технологий</h2>
-            <div class="news-grid">
-                <!-- Карточка 1 -->
-                <article class="news-item">
-                    <div class="news-img-wrapper">
-                        <img src="https://www.cnc24.com/wp-content/uploads/2023/02/3d-printer-for-metal-2021-08-26-15-33-15-utc-2048x1365.webp" alt="Metal 3D Printing">
-                    </div>
-                    <div class="news-content">
-                        <span class="news-date">12 Октября, 2023</span>
-                        <h3>Печать металлом: новые горизонты</h3>
-                        <p>Как аддитивные технологии снижают вес авиадеталей на 40% и экономят топливо.</p>
-                    </div>
-                </article>
-                
-                <!-- Карточка 2 -->
-                <article class="news-item">
-                    <div class="news-img-wrapper">
-                        <img src="https://plus.unsplash.com/premium_photo-1733873098557-924d617fa84d?auto=format&fit=crop&w=600&q=80" alt="Bioprinting Lab">
-                    </div>
-                    <div class="news-content">
-                        <span class="news-date">05 Октября, 2023</span>
-                        <h3>Биопринтинг: органы на принтере</h3>
-                        <p>Первые успешные испытания напечатанных живых тканей в регенеративной медицине.</p>
-                    </div>
-                </article>
-
-                <!-- Карточка 3 -->
-                <article class="news-item">
-                    <div class="news-img-wrapper">
-                        <img src="https://de.anycubic.com/cdn/shop/files/tough-resin-2.0-white.jpg" alt="SLA Resin Printing">
-                    </div>
-                    <div class="news-content">
-                        <span class="news-date">28 Сентября, 2023</span>
-                        <h3>Обзор нового полимера Tough Resin</h3>
-                        <p>Материал, который не уступает по прочности алюминию, но весит в три раза меньше.</p>
-                    </div>
-                </article>
-            </div>
-        </div>
-    </section>
-
-    <!-- Контакты -->
-    <section id="contact">
-        <div class="container">
-            <h2 class="section-title">Связаться с нами</h2>
-            <div class="contact-container">
-                <div class="contact-info">
-                    <div class="info-block">
-                        <h4>Локация</h4>
-                        <p>Инновационный центр «Сколково»,<br>ул. Технологий, д. 42</p>
-                    </div>
-                    <div class="info-block">
-                        <h4>Часы работы</h4>
-                        <p>Пн — Пт: 09:00 - 20:00<br>Сб: 11:00 - 17:00</p>
-                    </div>
-                    <div class="info-block">
-                        <h4>Почта</h4>
-                        <p>hello@3dlifeform.ru</p>
-                    </div>
-                </div>
-                <form>
-                    <input type="text" placeholder="Ваше имя" required>
-                    <input type="email" placeholder="Email" required>
-                    <textarea rows="4" placeholder="Ваш проект..."></textarea>
-                    <button type="submit" class="btn btn-main">Отправить запрос</button>
-                </form>
-            </div>
-        </div>
-    </section>
-
-    <footer>
-        <div class="container">
-            <p>&copy; 2023 3D - Форма жизни. Все права защищены.</p>
-        </div>
-    </footer>
-
-    <script>
-        // Мобильное меню
-        const burger = document.getElementById('burger');
-        const navLinks = document.getElementById('nav-links');
-
-        burger.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-        });
-
-        // Закрытие меню при клике на ссылку
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', () => {
-                navLinks.classList.remove('active');
-            });
-        });
-
-        // Эффект появления при прокрутке
-        const observerOptions = {
-            threshold: 0.1
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('section').forEach(section => {
-            section.style.opacity = '0';
-            section.style.transform = 'translateY(30px)';
-            section.style.transition = 'all 0.8s ease-out';
-            observer.observe(section);
-        });
-    </script>
-</body>
-</html>
+</body></html>
